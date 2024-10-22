@@ -1,3 +1,5 @@
+% Ejemplo de base de conocimiento 
+
 % Destinos
 destino(paris, 'Ciudad de la Luz').
 destino(nueva_york, 'La Gran Manzana').

@@ -1,37 +1,69 @@
-% Menú principal
-menu :-
-    writeln('Bienvenido al Asistente de Planificación de Viajes'),
-    writeln('1. Consultar Actividades de un Destino'),
-    writeln('2. Salir'),
+% Archivo main.pl
+:- ensure_loaded('agregarHechos.pl').  % Cargar las funcionalidades de hechos
+
+
+% Menú principal del sistema de planificación de viajes.
+menu_principal :-
+    print_menu_principal,
     read(Opcion),
-    ejecutar_opcion(Opcion).
+    menu_opcion(Opcion).
 
-% Ejecución de las opciones
-ejecutar_opcion(1) :-
-    writeln('Ingrese el destino: '),
-    read(Destino),
-    consultar_actividades_destino(Destino, Actividades, CostoTotal, DuracionTotal),
-    writeln('Actividades disponibles: '), writeln(Actividades),
-    writeln('Costo Total: '), writeln(CostoTotal),
-    writeln('Duración Total en días: '), writeln(DuracionTotal),
-    menu.
-ejecutar_opcion(2) :-
-    writeln('Saliendo...').
+% Mostrar el menú con caja
+print_menu_principal :-
+    writeln('--------------------------------------'),
+    writeln('|         ASISTENTE DE VIAJES        |'),
+    writeln('--------------------------------------'),
+    writeln('| 1. Agregar hechos                  |'),
+    writeln('| 2. Consulta destino                |'),
+    writeln('| 3. Actividades por tipo            |'),
+    writeln('| 4. Consulta por precio             |'),
+    writeln('| 5. Generar itinerario por monto    |'),
+    writeln('| 6. Generar itinerario por dias     |'),
+    writeln('| 7. Recomendar por frase            |'),
+    writeln('| 8. Estadisticas                    |'),
+    writeln('| 9. Salir                           |'),
+    writeln('--------------------------------------'),
+    write('Seleccione una opcion: ').
 
+% Manejar la opción elegida por el usuario
+menu_opcion(1) :-
+    agregar_hechos,
+    menu_principal.
 
+menu_opcion(2) :-
+    %consultar_destino,
+    menu_principal.
 
+menu_opcion(3) :-
+    %consultar_actividades_tipo,
+    menu_principal.
 
-% ejemplo de base de conocimiento
-iniciar_sistema :-
-    consult('BC.pl').
+menu_opcion(4) :-
+    %consultar_por_precio,
+    menu_principal.
 
+menu_opcion(5) :-
+    %generar_itinerario_monto,
+    menu_principal.
 
-guardar_cambios :-
-    tell('BC.pl'),
-    listing(destino/2),
-    listing(actividad/5),
-    listing(asociar_actividad/2),
-    told.
+menu_opcion(6) :-
+    %generar_itinerario_dias,
+    menu_principal.
+
+menu_opcion(7) :-
+    %recomendar_por_frase,
+    menu_principal.
+
+menu_opcion(8) :-
+    %mostrar_estadisticas,
+    menu_principal.
+
+menu_opcion(9) :-
+    writeln('Gracias por usar el Asistente de Viajes. ¡Hasta pronto!').
+
+menu_opcion(_) :-
+    writeln('Opción no válida, intente de nuevo.'),
+    menu_principal.
 
 
 
