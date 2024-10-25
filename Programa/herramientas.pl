@@ -1,0 +1,14 @@
+categorias_actividades([
+    'arte',
+    'historia',
+    'panorama',
+    'romantico',
+    'naturaleza',
+    'experiencia',
+    'cultura',
+    'arquitectura',
+    'diversion',
+    'gastronomia',
+    'educativo',
+    'aventura'
+]).
