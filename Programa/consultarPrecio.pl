@@ -2,16 +2,16 @@
 consultar_por_precio :-
     write('Ingrese el monto que desea consultar: '),
     read(Monto),
-    writeln('Seleccione una opción:'),
-    writeln('1. Consultar actividades más baratas'),
-    writeln('2. Consultar actividades más caras'),
-    write('Seleccione el número de opción: '),
+    writeln('Seleccione una opcion:'),
+    writeln('1. Consultar actividades mas baratas'),
+    writeln('2. Consultar actividades mas caras'),
+    write('Seleccione el numero de opcion: '),
     read(Opcion),
     ( Opcion = 1 -> 
         actividades_mas_baratas(Monto) 
     ; Opcion = 2 -> 
         actividades_mas_caras(Monto) 
-    ; writeln('Opción no válida, por favor intente nuevamente.')
+    ; writeln('Opcion no valida, por favor intente nuevamente.')
     ).
 
 % Predicado para listar actividades mas baratas que el monto dado
@@ -21,7 +21,7 @@ actividades_mas_baratas(Monto) :-
              Costo < Monto,
              asociar_actividad(Destino, Actividad)),
             Actividades),
-    mostrar_actividades_precio(Actividades, 'más baratas que').
+    mostrar_actividades_precio(Actividades, 'mas baratas que').
 
 % Predicado para listar actividades mas caras que el monto dado
 actividades_mas_caras(Monto) :-
@@ -30,7 +30,7 @@ actividades_mas_caras(Monto) :-
              Costo > Monto,
              asociar_actividad(Destino, Actividad)),
             Actividades),
-    mostrar_actividades_precio(Actividades, 'más caras que').
+    mostrar_actividades_precio(Actividades, 'mas caras que').
 
 % Predicado para mostrar las actividades filtradas por precio
 mostrar_actividades_precio([], _) :-
@@ -39,8 +39,8 @@ mostrar_actividades_precio([], _) :-
 mostrar_actividades_precio([(Actividad, Destino, Costo, Duracion, Descripcion)|Resto], Comparacion) :-
     format('Actividad: ~w~n', [Actividad]),
     format('  Destino: ~w~n', [Destino]),
-    format('  Descripción: ~w~n', [Descripcion]),
+    format('  Descripcion: ~w~n', [Descripcion]),
     format('  Costo: ~w~n', [Costo]),
-    format('  Duración: ~w días~n', [Duracion]),
+    format('  Duracion: ~w dias~n', [Duracion]),
     format('Estas actividades son ~w ~w.~n', [Comparacion, Costo]),
     mostrar_actividades_precio(Resto, Comparacion).

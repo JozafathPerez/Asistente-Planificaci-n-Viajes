@@ -2,12 +2,12 @@
 consultar_actividades_tipo :-
     writeln('Seleccione el tipo de actividad que desea consultar:'),
     listar_categorias,
-    write('Seleccione el número correspondiente al tipo: '),
+    write('Seleccione el numero correspondiente al tipo: '),
     read(Opcion),
     tipo_actividad(Opcion, Tipo),
     listar_actividades_tipo(Tipo).
 
-% Listar las categorías disponibles
+% Listar las categorias disponibles
 listar_categorias :-
     categorias_actividades(Categorias),
     listar_categorias_aux(Categorias, 1).
@@ -18,7 +18,7 @@ listar_categorias_aux([Categoria|Resto], Num) :-
     NextNum is Num + 1,
     listar_categorias_aux(Resto, NextNum).
 
-% Mapear número a tipo de actividad
+% Mapear numero a tipo de actividad
 tipo_actividad(1, 'arte').
 tipo_actividad(2, 'historia').
 tipo_actividad(3, 'panorama').
@@ -35,7 +35,7 @@ tipo_actividad(_, desconocido).
 
 % Predicado para listar actividades por tipo
 listar_actividades_tipo(desconocido) :-
-    writeln('Tipo de actividad no válido, por favor intente nuevamente.').
+    writeln('Tipo de actividad no valido, por favor intente nuevamente.').
 
 listar_actividades_tipo(Tipo) :-
     findall((Actividad, Destino, Costo, Duracion, Descripcion),
@@ -52,7 +52,7 @@ mostrar_actividades_tipo([]) :-
 mostrar_actividades_tipo([(Actividad, Destino, Costo, Duracion, Descripcion)|Resto]) :-
     format('Actividad: ~w~n', [Actividad]),
     format('  Destino: ~w~n', [Destino]),
-    format('  Descripción: ~w~n', [Descripcion]),
+    format('  Descripcion: ~w~n', [Descripcion]),
     format('  Costo: ~w~n', [Costo]),
-    format('  Duración: ~w días~n', [Duracion]),
+    format('  Duracion: ~w dias~n', [Duracion]),
     mostrar_actividades_tipo(Resto).
