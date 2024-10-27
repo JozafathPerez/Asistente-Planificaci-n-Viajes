@@ -1,6 +1,7 @@
 % Predicado principal para mostrar estadísticas
-estadisticas :-
-    writeln('Estadísticas del Sistema:'),
+mostrar_estadisticas :-
+    writeln('----------------------------------'),
+    writeln('Estadisticas del Sistema:'),
     writeln('----------------------------------'),
     top_3_ciudades_con_mas_actividades,
     actividad_mas_cara,
@@ -14,7 +15,7 @@ top_3_ciudades_con_mas_actividades :-
     contar_actividades_por_ciudad(DestinosUnicos, Contadores),
     sort(2, @>=, Contadores, Ordenado),  % Ordenar por la cantidad de actividades
     take(3, Ordenado, Top3),  % Tomar las 3 primeras ciudades
-    writeln('1. Las 3 ciudades con más actividades:'),
+    writeln('1. Las 3 ciudades con mas actividades:'),
     mostrar_top_ciudades(Top3).
 
 contar_actividades_por_ciudad([], []).
@@ -39,20 +40,20 @@ take(N, [X|Xs], [X|Ys]) :-
 actividad_mas_cara :-
     findall((Actividad, Costo), actividad(Actividad, Costo, _, _, _), ListaActividades),
     sort(2, @>=, ListaActividades, [(ActividadCara, CostoMax)|_]),
-    format('2. La actividad más cara es "~w" con un costo de ~w.~n', [ActividadCara, CostoMax]).
+    format('2. La actividad mas cara es "~w" con un costo de ~w.~n', [ActividadCara, CostoMax]).
 
 % 3. La actividad de menor duración
 actividad_menor_duracion :-
     findall((Actividad, Duracion), actividad(Actividad, _, Duracion, _, _), ListaActividades),
     sort(2, @=<, ListaActividades, [(ActividadCorta, DuracionMin)|_]),
-    format('3. La actividad de menor duración es "~w" con una duración de ~w días.~n', [ActividadCorta, DuracionMin]).
+    format('3. La actividad de menor duracion es "~w" con una duracion de ~w dias.~n', [ActividadCorta, DuracionMin]).
 
 % 4. La categoría con mas actividades
 categoria_mas_actividades :-
     categorias_actividades(ListaCategorias),
     contar_actividades_por_categoria(ListaCategorias, Conteos),
     sort(2, @>=, Conteos, [(CategoriaMax, MaxActividades)|_]),
-    format('4. La categoría con más actividades es "~w" con ~w actividades.~n', [CategoriaMax, MaxActividades]).
+    format('4. La categoria con mas actividades es "~w" con ~w actividades.~n', [CategoriaMax, MaxActividades]).
 
 contar_actividades_por_categoria([], []).
 contar_actividades_por_categoria([Categoria|Resto], [(Categoria, Conteo)|Conteos]) :-

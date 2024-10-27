@@ -1,21 +1,24 @@
-% Lista de palabras a ignorar en el análisis de la frase
 palabras_ignoradas(['el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'en', 'por', 'para', 'con', 'a']).
 
-% Predicado principal para recomendar actividades por frase
+% Predicado principal para recomendación por frase
 recomendar_por_frase :-
-    writeln('Ingrese una frase para la recomendación:'),
-    read_line_to_string(user_input, Frase),
+    write('Ingrese una frase para la recomendacion: '),
+    read(Frase),
     procesar_frase(Frase, PalabrasClave),
     buscar_actividades_por_palabras(PalabrasClave, Actividades),
-    mostrar_recomendaciones(Actividades).
+    (   Actividades = [] 
+    ->  writeln('No se encontraron actividades que coincidan con la frase ingresada.')
+    ;   mostrar_recomendaciones(Actividades)
+    ).
 
-% Procesar la frase eliminando palabras ignoradas y extrayendo palabras clave
+% Procesa la frase eliminando las palabras ignoradas
 procesar_frase(Frase, PalabrasClave) :-
-    split_string(Frase, " ", "", Palabras),
+    downcase_atom(Frase, FraseMin),
+    split_string(FraseMin, " ", "", Palabras),
     palabras_ignoradas(PalabrasIgnoradas),
-    exclude(\=(PalabrasIgnoradas), Palabras, PalabrasClave).
+    exclude({PalabrasIgnoradas}/[Palabra]>>member(Palabra, PalabrasIgnoradas), Palabras, PalabrasClave).
 
-% Buscar actividades que coincidan con las palabras clave
+% Busca actividades que coincidan con alguna palabra clave en la descripción o categorías
 buscar_actividades_por_palabras(PalabrasClave, Actividades) :-
     findall((Actividad, Destino, Costo, Duracion, Descripcion),
             (actividad(Actividad, Costo, Duracion, Descripcion, ListaTipos),
@@ -25,20 +28,20 @@ buscar_actividades_por_palabras(PalabrasClave, Actividades) :-
              asociar_actividad(Destino, Actividad)),
             Actividades).
 
-% Verifica si alguna de las palabras clave está en el texto
+% Verifica si alguna palabra clave está presente en el texto o lista de categorías
 contiene_palabra_clave(PalabrasClave, Texto) :-
+    (   atomic(Texto) -> downcase_atom(Texto, TextoMin)
+    ;   is_list(Texto) -> atomic_list_concat(Texto, ' ', TextoConcat), downcase_atom(TextoConcat, TextoMin)
+    ),
     member(Palabra, PalabrasClave),
-    sub_string(Texto, _, _, _, Palabra).
+    sub_string(TextoMin, _, _, _, Palabra).
 
-% Mostrar las actividades recomendadas con detalles
-mostrar_recomendaciones([]) :-
-    writeln('No se encontraron actividades que coincidan con la frase ingresada.').
-
+% Muestra las recomendaciones de actividades encontradas
 mostrar_recomendaciones([(Actividad, Destino, Costo, Duracion, Descripcion)|Resto]) :-
     format('Actividad: ~w~n', [Actividad]),
     format('  Destino: ~w~n', [Destino]),
-    format('  Descripción: ~w~n', [Descripcion]),
+    format('  Descripcion: ~w~n', [Descripcion]),
     format('  Costo: ~w~n', [Costo]),
-    format('  Duración: ~w días~n', [Duracion]),
+    format('  Duracion: ~w dias~n', [Duracion]),
     writeln('-----------------------------'),
     mostrar_recomendaciones(Resto).
