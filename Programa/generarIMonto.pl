@@ -262,5 +262,5 @@ escribir_itinerario([Nombre-Duracion-Costo | Resto]) :-
  ****************************************************/
 escribir_actividades([]).
 escribir_actividades([Nombre-Duracion-Costo | Resto]) :-
-    format("Actividad: ~w, Duración: ~w, Costo por persona: ~w~n", [Nombre, Duracion, Costo]),
+    format("Actividad: ~w, Duracion: ~w, Costo por persona: ~w~n", [Nombre, Duracion, Costo]),
     escribir_actividades(Resto).
