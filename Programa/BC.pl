@@ -1,6 +1,5 @@
 :- dynamic destino/2.
 
-% Destinos adicionales
 destino(paris, "Ciudad de la Luz").
 destino(nueva_york, "La Gran Manzana").
 destino(cuidad_de_panama, "La Ciudad del canal").
@@ -13,10 +12,10 @@ destino(venecia, "La Ciudad de los Canales").
 destino(cusco, "Capital del Imperio Inca").
 destino(dubai, "La Ciudad del Futuro").
 destino(londres, "La Ciudad de la Reina").
+destino(limon, "Lo mejor de limon es su gente").
 
 :- dynamic actividad/5.
 
-% Actividades adicionales
 actividad(museo_louvre, 25, 2, "Visitar el Museo del Louvre", [arte, historia]).
 actividad(paseo_en_bici, 30, 3, "Paseo en bicicleta por la ciudad", [aventura, naturaleza]).
 actividad(paseo_en_canoa, 20, 1, "Paseo en canoas extremas", [arte, panorama, naturaleza]).
@@ -39,10 +38,10 @@ actividad(basilica_sagrada_familia, 30, 1, "Visitar la Sagrada Familia", [arquit
 actividad(puente_londres, 20, 1, "Cruzar el Puente de Londres", [historia, arquitectura]).
 actividad(canal_panama, 60, 2, "Recorrido por el Canal de Panama", [educativo, experiencia]).
 actividad(teatro_shakespeare, 45, 2, "Ver una obra en el Teatro de Shakespeare", [cultura, arte]).
+actividad(paseo_en_bote, 5, 1, "Vamos a conocer a Uvita en bote", [aventura]).
 
 :- dynamic asociar_actividad/2.
 
-% Asociaciones adicionales
 asociar_actividad(paris, museo_louvre).
 asociar_actividad(paris, paseo_en_bici).
 asociar_actividad(paris, cena_paris).
@@ -65,3 +64,5 @@ asociar_actividad(dubai, desierto_dubai).
 asociar_actividad(londres, museo_britanico).
 asociar_actividad(londres, puente_londres).
 asociar_actividad(londres, teatro_shakespeare).
+asociar_actividad(limon, paseo_en_bote).
+
