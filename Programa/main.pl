@@ -9,7 +9,7 @@
 :- ensure_loaded('consultarPrecio.pl').    
 :- ensure_loaded('generarIMonto.pl').
 :- ensure_loaded('generarIDias.pl').
-:- ensure_loaded('recomendar').
+:- ensure_loaded('recomendar.pl').
 :- ensure_loaded('estadisticas.pl'). 
 
 /****************************************************
@@ -76,11 +76,11 @@ menu_opcion(6) :-
     menu.
 
 menu_opcion(7) :-
-    % recomendar_por_frase,
+    recomendar_por_frase,
     menu.
 
 menu_opcion(8) :-
-    % mostrar_estadisticas,
+    mostrar_estadisticas,
     menu.
 
 menu_opcion(9) :-
