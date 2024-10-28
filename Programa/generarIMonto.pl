@@ -1,10 +1,120 @@
-% Predicado principal para generar el itinerario.
-% generar_itinerario(Categoria, CriterioOrden, Presupuesto, NumeroPersonas, Itinerario)
-% Categoria: la categoría inicial.
-% CriterioOrden: el criterio de ordenamiento (largo o corto).
-% Presupuesto: el presupuesto total disponible.
-% NumeroPersonas: el número de personas para el que se calcula el costo.
-% Itinerario: la lista de actividades ordenadas y filtradas según el presupuesto y el número de personas.
+/****************************************************
+ * Entradas:
+ *   - Monto: cantidad de dinero que se desea gastar
+ *   - NumeroPersonas: cantidad de personas que realizarán el itinerario
+ *   - Categoria: categoría de actividades a considerar
+ *   - CriterioOrden: criterio de orden para las actividades(corto o largo) 
+ * Salidas:
+ *   - Escribe en consola las actividades que se pueden realizar
+ *
+ * Restricciones:
+ *   - 
+ *
+ * Objetivo:
+ *   - Mostrar menu para ingresar datos
+ ****************************************************/
+generar_itinerario_monto:- 
+    write('Ingrese el monto que desea gastar: '),
+    read(Monto),
+    write('Ingrese el numero de personas: '),
+    read(NumeroPersonas),
+    write('Seleccione una categoria: '),
+    read(Categoria),
+    write('Seleccione un criterio de orden: '),
+    read(CriterioOrden),
+    generar_itinerario(Categoria, CriterioOrden, Monto, NumeroPersonas, Itinerario),
+    escribir_itinerario(Itinerario).
+
+/****************************************************
+ * Entradas:
+ *   - Categoria: categoría de actividades a considerar
+ *   - CriterioOrden: criterio de orden para las actividades(corto o largo) 
+ * Salidas:
+ *   - Lista de categorías afines a la categoría dada
+ *
+ * Objetivo:
+ *   - Obtener las categorías afines a la categoría dada
+ ****************************************************/
+categorias_afines(Categoria, CategoriasAfines) :-
+    findall(CatAfin, (afinidad(Categoria, CatAfin) ; afinidad(CatAfin, Categoria)), CategoriasAfinesDuplicadas),
+    list_to_set(CategoriasAfinesDuplicadas, CategoriasAfines).  % Eliminar duplicados
+
+/****************************************************
+ * Entradas:
+ *   - Categoria: categoría de actividades a considerar
+ * Salidas:
+ *   - CategoriasAdicionales: lista de categorías adicionales relacionadas
+ *
+ * Objetivo:
+ *   - Obtener categorías adicionales relacionadas con la categoría dada y sus afines
+ ****************************************************/
+categorias_adicionales(Categoria, CategoriasAdicionales) :-
+    categorias_afines(Categoria, CategoriasAfines),  % Obtener las categorías afines
+    findall(CatAdicional, 
+            (actividad(_, _, _, _, Categorias),           % Revisar cada actividad
+             member(Cat, Categorias),                     % Para cada categoría en la actividad
+             (Cat = Categoria; member(Cat, CategoriasAfines)),  % La categoría es la buscada o una afin
+             member(CatAdicional, Categorias),            % Tomar cada categoría adicional de la actividad
+             CatAdicional \= Categoria,                   % Excluir la categoría buscada
+             \+ member(CatAdicional, CategoriasAfines)),  % Excluir categorías afines
+            CategoriasAdicionalesDuplicadas),
+    list_to_set(CategoriasAdicionalesDuplicadas, CategoriasAdicionales).  % Eliminar duplicados
+
+/****************************************************
+ * Entradas:
+ *   - Categoria: categoría de actividades a considerar
+ * Salidas:
+ *   - CategoriasAfinesAdicionales: lista de categorías afines de categorías adicionales
+ *
+ * Objetivo:
+ *   - Obtener las categorías afines de las categorías adicionales relacionadas
+ ****************************************************/
+categorias_afines_de_adicionales(Categoria, CategoriasAfines, CategoriasAdicionales, CategoriasAfinesAdicionales) :-
+    % Reunir todas las categorías excluidas (la buscada, sus afines y las adicionales)
+    append([Categoria | CategoriasAfines], CategoriasAdicionales, CategoriasExcluidas),
+    
+    % Encontrar afines de cada categoría adicional que no estén en las categorías excluidas
+    findall(CatAfin,
+            (member(CatAdicional, CategoriasAdicionales),  % Para cada categoría adicional
+             categorias_afines(CatAdicional, AfinesCatAdicional), % Obtener sus afines
+             member(CatAfin, AfinesCatAdicional),         % Ver cada afinidad de la categoría adicional
+             \+ member(CatAfin, CategoriasExcluidas)),    % Excluir ya presentes
+            CategoriasAfinesAdicionalesDuplicadas),
+    
+    % Eliminar duplicados de la lista final
+    list_to_set(CategoriasAfinesAdicionalesDuplicadas, CategoriasAfinesAdicionales).
+
+/****************************************************
+ * Entradas:
+ *   - Categoria: categoría de actividades a considerar
+ * Salidas:
+ *   - CategoriasAfinesAdicionales: lista de categorías afines de categorías adicionales
+ *
+ * Objetivo:
+ *   - Obtener las categorías afines de las categorías adicionales relacionadas
+ ****************************************************/
+categorias_afines_y_adicionales(Categoria, CategoriasAdicionales, CategoriasAfinesAdicionales) :-
+    % Obtener las categorías afines de la categoría buscada
+    categorias_afines(Categoria, CategoriasAfines),
+    
+    % Obtener las categorías adicionales a partir de la categoría buscada y sus afines
+    categorias_adicionales(Categoria,CategoriasAdicionales),
+    
+    % Obtener las categorías afines de las categorías adicionales
+    categorias_afines_de_adicionales(Categoria, CategoriasAfines, CategoriasAdicionales, CategoriasAfinesAdicionales).
+
+/****************************************************
+ * Entradas:
+ *   - Categoria: categoría de actividades a considerar
+ *   - CriterioOrden: criterio de orden para las actividades (corto o largo)
+ *   - Presupuesto: cantidad de dinero total disponible
+ *   - NumeroPersonas: cantidad de personas que realizarán el itinerario
+ * Salidas:
+ *   - Itinerario: lista de actividades que se ajustan al presupuesto
+ *
+ * Objetivo:
+ *   - Generar un itinerario de actividades que se ajusten al presupuesto y criterios especificados
+ ****************************************************/
 generar_itinerario(Categoria, CriterioOrden, Presupuesto, NumeroPersonas, Itinerario) :-
     % Obtener y ordenar actividades de categoría igual
     actividades_categoria(Categoria, CriterioOrden, ActividadesIguales),
@@ -28,13 +138,31 @@ generar_itinerario(Categoria, CriterioOrden, Presupuesto, NumeroPersonas, Itiner
     % Filtrar las actividades según el presupuesto y el número de personas
     filtrar_por_presupuesto(ActividadesSinDuplicados, Presupuesto, NumeroPersonas, Itinerario).
 
-% Predicado para filtrar actividades según el presupuesto y el número de personas
-% filtrar_por_presupuesto(Actividades, Presupuesto, NumeroPersonas, ActividadesFiltradas)
+/****************************************************
+ * Entradas:
+ *   - Actividades: lista de actividades con sus costos y duración
+ *   - Presupuesto: cantidad de dinero disponible
+ *   - NumeroPersonas: cantidad de personas que realizarán las actividades
+ * Salidas:
+ *   - ActividadesFiltradas: lista de actividades que se ajustan al presupuesto
+ *
+ * Objetivo:
+ *   - Filtrar actividades según el presupuesto y el número de personas
+ ****************************************************/
 filtrar_por_presupuesto(Actividades, Presupuesto, NumeroPersonas, ActividadesFiltradas) :-
     filtrar(Actividades, Presupuesto, NumeroPersonas, 0, ActividadesFiltradas).
 
-% Predicado recursivo para filtrar actividades
-% filtrar(Actividades, Presupuesto, NumeroPersonas, Acumulado, ActividadesFiltradas)
+/****************************************************
+ * Entradas:
+ *   - Actividades: lista de actividades con costos y duración
+ *   - Presupuesto: cantidad de dinero total disponible
+ *   - NumeroPersonas: cantidad de personas que realizarán las actividades
+ * Salidas:
+ *   - ActividadesFiltradas: lista de actividades dentro del presupuesto
+ *
+ * Objetivo:
+ *   - Filtrar actividades según el presupuesto y el número de personas
+ ****************************************************/
 filtrar([], _, _, _, []).  
 filtrar([Nombre-Duracion-Costo | Resto], Presupuesto, NumeroPersonas, Acumulado, [Nombre-Duracion-Costo | ActividadesFiltradas]) :-
     % Calcular el costo total de la actividad para el número de personas
@@ -48,8 +176,17 @@ filtrar([_ | Resto], Presupuesto, NumeroPersonas, Acumulado, ActividadesFiltrada
     % Si no se puede añadir la actividad, continuar con el resto
     filtrar(Resto, Presupuesto, NumeroPersonas, Acumulado, ActividadesFiltradas).
 
-% Predicado para obtener actividades por categoría y ordenarlas según el criterio dado.
-% actividades_categoria(Categoria, CriterioOrden, ActividadesOrdenadas)
+/****************************************************
+ * Entradas:
+ *   - Categoria: Categoría específica de actividades a buscar (e.g., "historia").
+ *   - CriterioOrden: Criterio de ordenación ("largo" o "corto") para las actividades.
+ * 
+ * Salidas:
+ *   - ActividadesOrdenadas: Lista de actividades que pertenecen a la categoría especificada, ordenadas según el criterio.
+ *
+ * Objetivo:
+ *   - Obtener una lista de actividades filtradas por una categoría específica, ordenadas de acuerdo con el criterio especificado.
+ ****************************************************/
 actividades_categoria(Categoria, CriterioOrden, ActividadesOrdenadas) :-
     findall(Nombre-Duracion-Costo,
             (actividad(Nombre, Costo, Duracion, _, Categorias),
@@ -57,8 +194,17 @@ actividades_categoria(Categoria, CriterioOrden, ActividadesOrdenadas) :-
             Actividades),
     ordenar_por_criterio(Actividades, CriterioOrden, ActividadesOrdenadas).
 
-% Predicado para obtener actividades de una lista de categorías y ordenarlas
-% actividades_por_categorias(Categorias, CriterioOrden, ActividadesOrdenadas)
+/****************************************************
+ * Entradas:
+ *   - Categorias: Lista de categorías en las cuales buscar actividades (e.g., ["historia", "aventura"]).
+ *   - CriterioOrden: Criterio de ordenación ("largo" o "corto") para las actividades.
+ * 
+ * Salidas:
+ *   - ActividadesOrdenadas: Lista de actividades que pertenecen a las categorías especificadas, ordenadas según el criterio.
+ *
+ * Objetivo:
+ *   - Generar una lista de actividades que pertenecen a varias categorías, ordenadas de acuerdo con el criterio especificado.
+ ****************************************************/
 actividades_por_categorias(Categorias, CriterioOrden, ActividadesOrdenadas) :-
     findall(Nombre-Duracion-Costo,
             (member(Categoria, Categorias),
@@ -67,8 +213,16 @@ actividades_por_categorias(Categorias, CriterioOrden, ActividadesOrdenadas) :-
             Actividades),
     ordenar_por_criterio(Actividades, CriterioOrden, ActividadesOrdenadas).
 
-% Predicado para ordenar actividades según un criterio y orden específico
-% ordenar_por_criterio(Actividades, Criterio, ActividadesOrdenadas)
+/****************************************************
+ * Entradas:
+ *   - Actividades: lista de actividades con su duración
+ *   - CriterioOrden: criterio de orden para las actividades (corto o largo)
+ * Salidas:
+ *   - ActividadesOrdenadas: lista de actividades ordenadas según el criterio
+ *
+ * Objetivo:
+ *   - Ordenar las actividades según la duración (corto o largo)
+ ****************************************************/
 ordenar_por_criterio(Actividades, largo, ActividadesOrdenadas) :-
     predsort(compare_duracion_desc, Actividades, ActividadesOrdenadas). % Mayor a menor
 ordenar_por_criterio(Actividades, corto, ActividadesOrdenadas) :-
@@ -80,3 +234,33 @@ compare_duracion_asc(>, _-D1-_, _-D2-_) :- D1 > D2.
 
 compare_duracion_desc(<, _-D1-_, _-D2-_) :- D1 >= D2.
 compare_duracion_desc(>, _-D1-_, _-D2-_) :- D1 < D2.
+
+/****************************************************
+ * Entradas:
+ *   - Itinerario: lista de actividades generadas
+ * Salidas:
+ *   - Impresión en consola de las actividades del itinerario
+ *
+ * Objetivo:
+ *   - Imprimir el itinerario en consola o indicar si no se encontraron actividades
+ ****************************************************/
+escribir_itinerario([]) :-
+    writeln("No se encontraron actividades dentro del presupuesto disponible.").
+
+escribir_itinerario([Nombre-Duracion-Costo | Resto]) :-
+    writeln("Itinerario de Actividades:"),
+    escribir_actividades([Nombre-Duracion-Costo | Resto]).
+
+/****************************************************
+ * Entradas:
+ *   - Lista de actividades con nombre, duración y costo
+ * Salidas:
+ *   - Impresión en consola de cada actividad
+ *
+ * Objetivo:
+ *   - Imprimir los detalles de cada actividad en el itinerario
+ ****************************************************/
+escribir_actividades([]).
+escribir_actividades([Nombre-Duracion-Costo | Resto]) :-
+    format("Actividad: ~w, Duración: ~w, Costo por persona: ~w~n", [Nombre, Duracion, Costo]),
+    escribir_actividades(Resto).
