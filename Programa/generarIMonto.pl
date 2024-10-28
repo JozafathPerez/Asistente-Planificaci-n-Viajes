@@ -8,22 +8,42 @@
  *   - Escribe en consola las actividades que se pueden realizar
  *
  * Restricciones:
- *   - 
+ *   - Monto y NumeroPersonas deben ser números enteros
+ *   - El criterio de orden debe ser "corto" o "largo"
  *
  * Objetivo:
  *   - Mostrar menu para ingresar datos
  ****************************************************/
-generar_itinerario_monto:- 
+generar_itinerario_monto :-
     write('Ingrese el monto que desea gastar: '),
     read(Monto),
+    es_numero(Monto),
     write('Ingrese el numero de personas: '),
     read(NumeroPersonas),
+    es_numero(NumeroPersonas),
     write('Seleccione una categoria: '),
     read(Categoria),
-    write('Seleccione un criterio de orden: '),
+    
+    % Validar el criterio de orden
+    write('Seleccione un criterio de orden (corto/largo): '),
     read(CriterioOrden),
-    generar_itinerario(Categoria, CriterioOrden, Monto, NumeroPersonas, Itinerario),
+    validar_criterio_orden(CriterioOrden, Categoria, Monto, NumeroPersonas).
+
+% Validar que el criterio de orden sea "corto" o "largo"
+validar_criterio_orden(corto, Categoria, Monto, NumeroPersonas) :-
+    generar_itinerario(Categoria, corto, Monto, NumeroPersonas, Itinerario),
     escribir_itinerario(Itinerario).
+
+validar_criterio_orden(largo, Categoria, Monto, NumeroPersonas) :-
+    generar_itinerario(Categoria, largo, Monto, NumeroPersonas, Itinerario),
+    escribir_itinerario(Itinerario).
+
+validar_criterio_orden(_, Categoria, Monto, NumeroPersonas) :-
+    write('Criterio de orden no válido. Debe ser "corto" o "largo".'), nl,
+    % Volver a solicitar el criterio de orden
+    write('Seleccione un criterio de orden (corto/largo): '),
+    read(NuevoCriterioOrden),
+    validar_criterio_orden(NuevoCriterioOrden, Categoria, Monto, NumeroPersonas).
 
 /****************************************************
  * Entradas:

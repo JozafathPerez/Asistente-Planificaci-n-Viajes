@@ -1,16 +1,17 @@
 
 /****************************************************
  * Entradas:
- *   - 
+ *   - Sin entradas explícitas.
  * 
  * Salidas:
- *   - 
+ *   - Genera y muestra un itinerario filtrado por días según las preferencias de usuario.
  *
  * Restricciones:
- *   - 
+ *   - El número de días debe ser un valor numérico válido.
  *
  * Objetivo:
- *   - 
+ *   - Solicitar al usuario información para generar un itinerario con actividades que no
+ *     excedan el número de días indicado y, si lo desea, regenerarlo con otro criterio de orden.
  ****************************************************/
 generar_itinerario_dias_menu :-
     write('Seleccione una categoria: '),
@@ -28,7 +29,21 @@ generar_itinerario_dias_menu :-
     read(Respuesta),
     manejar_respuesta_regeneracion(Respuesta, Categoria, Dias).
 
-% Manejar respuesta del usuario para regenerar el itinerario
+/****************************************************
+ * Entradas:
+ *   - Respuesta: respuesta del usuario para regenerar o no el itinerario.
+ *   - Categoria: categoría de actividades para el itinerario.
+ *   - Dias: número máximo de días para el itinerario.
+ * 
+ * Salidas:
+ *   - Muestra un itinerario regenerado o un mensaje de agradecimiento.
+ *
+ * Restricciones:
+ *   - La respuesta debe ser 's' o 'n' para indicar si se desea regenerar.
+ *
+ * Objetivo:
+ *   - Manejar la respuesta del usuario y regenerar el itinerario si es necesario.
+ ****************************************************/
 manejar_respuesta_regeneracion('s', Categoria, Dias) :-
     generar_itinerario_con_dias(Categoria, largo, Dias, ItinerarioLargo),
     write('Itinerario generado con estancia larga: '), nl,
@@ -47,15 +62,17 @@ manejar_respuesta_regeneracion(_, Categoria, Dias) :-
 
 /****************************************************
  * Entradas:
- *   - Categoria: categoría de actividades a considerar
- *   - CriterioOrden: criterio de orden para las actividades (corto o largo)
- *   - Presupuesto: cantidad de dinero total disponible
- *   - NumeroPersonas: cantidad de personas que realizarán el itinerario
+ *   - Categoria: categoría de actividades a considerar.
+ *   - CriterioOrden: criterio de orden para las actividades (corto o largo).
+ * 
  * Salidas:
- *   - Itinerario: lista de actividades que se ajustan al presupuesto
+ *   - Itinerario: lista de actividades generada por prioridad de categoría.
+ *
+ * Restricciones:
+ *   - CriterioOrden debe ser un valor válido ('corto' o 'largo').
  *
  * Objetivo:
- *   - Generar un itinerario de actividades que se ajusten al presupuesto y criterios especificados
+ *   - Generar un itinerario de actividades clasificadas y ordenadas por preferencia de categorías.
  ****************************************************/
 generar_itinerario_dias(Categoria, CriterioOrden, Itinerario) :-
     % Obtener y ordenar actividades de categoría igual
@@ -76,38 +93,41 @@ generar_itinerario_dias(Categoria, CriterioOrden, Itinerario) :-
     % Concatenar todas las listas en orden de prioridad y eliminar duplicados
     append([ActividadesIguales, ActividadesAfines, ActividadesAdicionales, ActividadesAfinesAdicionales], ActividadesTotales),
     list_to_set(ActividadesTotales, Itinerario).
+
 /****************************************************
  * Entradas:
- *   - 
+ *   - Categoria: categoría de actividades a considerar.
+ *   - CriterioOrden: criterio de orden para las actividades (corto o largo).
+ *   - MaxDias: cantidad máxima de días disponibles para el itinerario.
  * 
  * Salidas:
- *   - 
+ *   - ItinerarioFiltrado: lista de actividades dentro del límite de días especificado.
  *
  * Restricciones:
- *   - 
+ *   - CriterioOrden debe ser un valor válido ('corto' o 'largo').
+ *   - MaxDias debe ser un número positivo.
  *
  * Objetivo:
- *   - 
- ****************************************************/    
-% Predicado principal que filtra actividades por un límite de días
+ *   - Generar y filtrar un itinerario para que las actividades no excedan el número máximo de días.
+ ****************************************************/  
 generar_itinerario_con_dias(Categoria, CriterioOrden, MaxDias, ItinerarioFiltrado) :-
     generar_itinerario_dias(Categoria, CriterioOrden, ItinerarioSinFiltrar),
     filtrar_por_dias(ItinerarioSinFiltrar, MaxDias, ItinerarioFiltrado).
 
 /****************************************************
  * Entradas:
- *   - 
+ *   - Lista de actividades con sus duraciones.
+ *   - MaxDias: número máximo de días permitidos para el itinerario.
  * 
  * Salidas:
- *   - 
+ *   - ItinerarioFiltrado: lista de actividades que se ajustan al límite de días.
  *
  * Restricciones:
- *   - 
+ *   - MaxDias debe ser un número positivo.
  *
  * Objetivo:
- *   - 
+ *   - Filtrar las actividades para que el itinerario no exceda el límite de días especificado.
  ****************************************************/
-% Predicado auxiliar que filtra la lista de actividades sin exceder el límite de días
 filtrar_por_dias([], _, []).  % Caso base: si la lista está vacía, el resultado también lo está
 filtrar_por_dias([Nombre-Duracion-Costo | RestoActividades], MaxDias, [Nombre-Duracion-Costo | RestoFiltrado]) :-
     MaxDias >= Duracion,  % Solo si la actividad no supera el límite de días
