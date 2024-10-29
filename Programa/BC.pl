@@ -16,7 +16,7 @@ destino(limon, "Lo mejor de limon es su gente").
 
 :- dynamic actividad/5.
 
-actividad(museo_louvre, 25, 2, "Visitar el Museo del Louvre", [arte, historia]).
+actividad(museo_louvre, 25, 2, "Visitar el Museo del Louvre", [experiencia, historia]).
 actividad(paseo_en_bici, 30, 3, "Paseo en bicicleta por la ciudad", [aventura, naturaleza]).
 actividad(paseo_en_canoa, 20, 1, "Paseo en canoas extremas", [arte, panorama, naturaleza]).
 actividad(coliseo_roma, 50, 1, "Explorar el Coliseo de Roma", [historia, arquitectura]).
@@ -39,6 +39,7 @@ actividad(puente_londres, 20, 1, "Cruzar el Puente de Londres", [historia, arqui
 actividad(canal_panama, 60, 2, "Recorrido por el Canal de Panama", [educativo, experiencia]).
 actividad(teatro_shakespeare, 45, 2, "Ver una obra en el Teatro de Shakespeare", [cultura, arte]).
 actividad(paseo_en_bote, 5, 1, "Vamos a conocer a Uvita en bote", [aventura]).
+
 
 :- dynamic asociar_actividad/2.
 
@@ -65,4 +66,6 @@ asociar_actividad(londres, museo_britanico).
 asociar_actividad(londres, puente_londres).
 asociar_actividad(londres, teatro_shakespeare).
 asociar_actividad(limon, paseo_en_bote).
+
+
 

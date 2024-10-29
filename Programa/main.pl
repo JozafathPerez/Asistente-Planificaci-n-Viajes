@@ -68,11 +68,11 @@ menu_opcion(4) :-
     menu.
 
 menu_opcion(5) :-
-    % generar_itinerario_monto,
+    generar_itinerario_monto,
     menu.
 
 menu_opcion(6) :-
-    % generar_itinerario_dias,
+    generar_itinerario_dias_menu,
     menu.
 
 menu_opcion(7) :-
